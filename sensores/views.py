@@ -253,6 +253,19 @@ class HistoricoViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             return Response({'erro': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+    def exportar_excel(request):
+    sensores = Sensor.objects.all().values()
+    df = pd.DataFrame(list(sensores))
+
+    response = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename="sensores.xlsx"'
+
+    df.to_excel(response, index=False, engine='openpyxl')
+    return response
         
 
 
